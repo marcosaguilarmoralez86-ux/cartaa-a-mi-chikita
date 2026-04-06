@@ -8,20 +8,16 @@
         body { margin: 0; background: #fce4ec; font-family: 'Arial', sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; }
         .stage { display: none; position: absolute; width: 100%; height: 100%; justify-content: center; align-items: center; text-align: center; background: #000; }
         
-        /* Carta */
-        #envelope { cursor: pointer; transition: 0.3s; background: #fce4ec; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #envelope { cursor: pointer; background: #fce4ec; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
         .env-img { width: 250px; }
 
-        /* Video de Intro */
         #introVideo { max-height: 100vh; max-width: 100%; }
 
-        /* Fotos */
         #photo-stage { background: #fce4ec; }
         .photo-frame { display: none; width: 100%; height: 100%; justify-content: center; align-items: center; }
         .photo-frame img { max-height: 80vh; animation: zoom 1.1s linear forwards; }
         @keyframes zoom { from { transform: scale(1); } to { transform: scale(1.15); } }
 
-        /* Texto y Corazones */
         #text-stage { background: white; padding: 20px; flex-direction: column; }
         .mensaje { font-size: 1.3rem; color: #d81b60; z-index: 10; max-width: 80%; line-height: 1.5; font-weight: bold; }
         .heart { position: absolute; color: red; animation: fall linear forwards; z-index: 5; }
@@ -36,7 +32,7 @@
     </div>
 
     <div id="video-stage" class="stage">
-        <video id="introVideo" src="intro.mp4" playsinline></video>
+        <video id="introVideo" src="intro.mp4" playsinline preload="auto"></video>
     </div>
 
     <audio id="audio2" src="cancion.mp3"></audio>
@@ -63,15 +59,20 @@
         const fotos = document.querySelectorAll('.photo-frame');
 
         function iniciar() {
+            // Ocultamos la carta
             document.getElementById('envelope').style.display = 'none';
             document.getElementById('video-stage').style.display = 'flex';
-            v1.play();
             
-            // Cuando acabe el VIDEO
+            // Forzamos la reproducción del video
+            v1.load(); // Recarga para asegurar
+            v1.play().catch(error => {
+                console.log("Error al reproducir: ", error);
+            });
+            
             v1.onended = () => {
                 document.getElementById('video-stage').style.display = 'none';
                 document.getElementById('photo-stage').style.display = 'flex';
-                a2.currentTime = 38; // Empieza en el segundo 38
+                a2.currentTime = 38; 
                 a2.play();
                 mostrarFotos(0);
             };
